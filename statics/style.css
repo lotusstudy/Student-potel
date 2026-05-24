@@ -1,0 +1,25 @@
+/* Global shared styles for Lotus Academy Attendance Portal */
+
+/* All major styles are in the templates — this file can be used for overrides */
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.03);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245,158,11,0.4);
+}
