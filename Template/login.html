@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% if mode == 'admin' %}Admin Portal{% else %}Student Login{% endif %} — Lotus Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --amber:  #f59e0b;
+    --amber2: #fbbf24;
+    --deep:   #0d0d1a;
+    --card:   rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.13);
+    --red:    #ef4444;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--deep);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Animated background blobs */
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.35;
+    animation: drift 12s ease-in-out infinite alternate;
+  }
+  .blob-1 { width: 520px; height: 520px; background: #7c3aed; top: -120px; left: -150px; animation-delay: 0s; }
+  .blob-2 { width: 400px; height: 400px; background: #f59e0b; bottom: -100px; right: -80px; animation-delay: -4s; }
+  .blob-3 { width: 300px; height: 300px; background: #06b6d4; bottom: 80px; left: 100px; animation-delay: -8s; }
+
+  @keyframes drift {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(30px, 30px) scale(1.08); }
+  }
+
+  .card {
+    position: relative;
+    z-index: 10;
+    background: var(--card);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 48px 44px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    animation: slideUp 0.6s cubic-bezier(.22,1,.36,1);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-wrap {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo-icon {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--amber), #d97706);
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 32px rgba(245,158,11,0.4);
+  }
+
+  .logo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .logo-sub {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .tab-row {
+    display: flex;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 28px;
+    gap: 4px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 9px 0;
+    border: none;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    text-align: center;
+    display: block;
+    color: rgba(255,255,255,0.55);
+    background: transparent;
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--amber), #d97706);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(245,158,11,0.35);
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 7px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .input-wrap {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .input-wrap i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.35);
+    font-size: 0.95rem;
+    pointer-events: none;
+  }
+
+  .form-input {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 15px 13px 42px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .form-input::placeholder { color: rgba(255,255,255,0.25); }
+
+  .form-input:focus {
+    border-color: var(--amber2);
+    background: rgba(255,255,255,0.1);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--amber), #d97706);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 6px 24px rgba(245,158,11,0.35);
+    letter-spacing: 0.02em;
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(245,158,11,0.45); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .error-box {
+    background: rgba(239,68,68,0.12);
+    border: 1px solid rgba(239,68,68,0.35);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #fca5a5;
+    font-size: 0.88rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bottom-link {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 0.84rem;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .bottom-link a {
+    color: var(--amber2);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 36px 24px; margin: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="card">
+  <div class="logo-wrap">
+    <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+    <div class="logo-title">Lotus Academy</div>
+    <div class="logo-sub">Attendance Management System</div>
+  </div>
+
+  <!-- Tab switcher -->
+  <div class="tab-row">
+    <a href="{{ url_for('admin_login') }}"
+       class="tab-btn {% if mode == 'admin' %}active{% endif %}">
+      <i class="fas fa-shield-halved" style="margin-right:5px"></i>Admin
+    </a>
+    <a href="{{ url_for('student_login') }}"
+       class="tab-btn {% if mode == 'student' %}active{% endif %}">
+      <i class="fas fa-user-graduate" style="margin-right:5px"></i>Student
+    </a>
+  </div>
+
+  {% if error %}
+  <div class="error-box">
+    <i class="fas fa-circle-exclamation"></i> {{ error }}
+  </div>
+  {% endif %}
+
+  {% if mode == 'admin' %}
+  <form method="POST" action="{{ url_for('admin_login') }}">
+    <label class="form-label">Admin Username</label>
+    <div class="input-wrap">
+      <i class="fas fa-user"></i>
+      <input class="form-input" type="text" name="username" placeholder="Enter admin username" required autofocus>
+    </div>
+    <label class="form-label">Password</label>
+    <div class="input-wrap">
+      <i class="fas fa-lock"></i>
+      <input class="form-input" type="password" name="password" placeholder="Enter password" required>
+    </div>
+    <button class="btn-primary" type="submit">
+      <i class="fas fa-right-to-bracket" style="margin-right:8px"></i>Access Admin Portal
+    </button>
+  </form>
+  <div class="bottom-link">Authorized personnel only</div>
+
+  {% else %}
+  <form method="POST" action="{{ url_for('student_login') }}">
+    <label class="form-label">Student Username</label>
+    <div class="input-wrap">
+      <i class="fas fa-user"></i>
+      <input class="form-input" type="text" name="username" placeholder="Enter your username" required autofocus>
+    </div>
+    <label class="form-label">Password</label>
+    <div class="input-wrap">
+      <i class="fas fa-lock"></i>
+      <input class="form-input" type="password" name="password" placeholder="Enter your password" required>
+    </div>
+    <button class="btn-primary" type="submit">
+      <i class="fas fa-right-to-bracket" style="margin-right:8px"></i>View My Attendance
+    </button>
+  </form>
+  <div class="bottom-link">Contact admin if you can't log in</div>
+  {% endif %}
+</div>
+
+</body>
+</html>
