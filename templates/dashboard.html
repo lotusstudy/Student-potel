@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Attendance — Lotus Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --amber:   #f59e0b;
+    --amber2:  #fbbf24;
+    --deep:    #0c0c18;
+    --sidebar: #0f0f24;
+    --surface: #141428;
+    --card:    #1a1a32;
+    --card2:   #1f1f3c;
+    --border:  rgba(255,255,255,0.07);
+    --text:    #e2e8f0;
+    --muted:   #94a3b8;
+    --green:   #10b981;
+    --red:     #ef4444;
+    --blue:    #3b82f6;
+    --purple:  #8b5cf6;
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--deep);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 28px 18px;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand-icon {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--amber), #d97706);
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #fff;
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .brand-tag { font-size: 0.7rem; color: var(--muted); }
+
+  .student-chip {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.18);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .student-avatar {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--purple), var(--blue));
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .student-chip-name { font-size: 0.95rem; font-weight: 600; color: #fff; }
+  .student-chip-info { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+  .nav-section {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin: 16px 0 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    background: rgba(245,158,11,0.1);
+    color: var(--amber2);
+  }
+
+  .nav-item i { width: 17px; text-align: center; }
+
+  .sidebar-bottom { margin-top: auto; }
+
+  /* ── Main ── */
+  .main { margin-left: 250px; flex: 1; display: flex; flex-direction: column; }
+
+  /* Topbar */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 15px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: #fff;
+  }
+
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 9px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-ghost {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+
+  .btn-danger {
+    background: rgba(239,68,68,0.1);
+    color: #fca5a5;
+    border: 1px solid rgba(239,68,68,0.2);
+  }
+  .btn-danger:hover { background: rgba(239,68,68,0.18); }
+
+  /* Content */
+  .content { padding: 28px; flex: 1; }
+
+  /* Profile banner */
+  .profile-banner {
+    background: linear-gradient(135deg, #1e1e4a 0%, #2a1a4a 50%, #1a2a4a 100%);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-banner::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(139,92,246,0.2), transparent 70%);
+  }
+
+  .profile-avatar {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--purple), var(--blue));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.3);
+  }
+
+  .profile-info h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .tag {
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+
+  .tag-amber  { background: rgba(245,158,11,0.2); color: var(--amber2); }
+  .tag-blue   { background: rgba(59,130,246,0.2); color: #93c5fd; }
+  .tag-purple { background: rgba(139,92,246,0.2); color: #c4b5fd; }
+
+  /* Stat cards */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; right: -20px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    opacity: 0.15;
+  }
+
+  .stat-card.present  { background: linear-gradient(135deg, #064e3b, #065f46); }
+  .stat-card.present::after  { background: var(--green); }
+  .stat-card.absent   { background: linear-gradient(135deg, #450a0a, #7f1d1d); }
+  .stat-card.absent::after   { background: var(--red); }
+  .stat-card.total    { background: linear-gradient(135deg, #1e1b4b, #312e81); }
+  .stat-card.total::after    { background: var(--purple); }
+  .stat-card.status   { background: linear-gradient(135deg, #0c1a2e, #1e3a5f); }
+  .stat-card.status::after   { background: var(--blue); }
+
+  .stat-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .stat-card.present .stat-icon { background: rgba(16,185,129,0.25); color: var(--green); }
+  .stat-card.absent  .stat-icon { background: rgba(239,68,68,0.25);  color: var(--red); }
+  .stat-card.total   .stat-icon { background: rgba(139,92,246,0.25); color: var(--purple); }
+  .stat-card.status  .stat-icon { background: rgba(59,130,246,0.25); color: var(--blue); }
+
+  .stat-value { font-size: 2rem; font-weight: 700; color: #fff; line-height: 1; }
+  .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.55); margin-top: 6px; }
+
+  /* Progress bar */
+  .progress-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .progress-info { flex: 1; min-width: 160px; }
+  .progress-label { font-size: 0.82rem; color: var(--muted); margin-bottom: 8px; }
+  .progress-bar-wrap { background: rgba(255,255,255,0.06); border-radius: 99px; height: 10px; width: 100%; overflow: hidden; }
+  .progress-bar-fill { height: 100%; border-radius: 99px; transition: width 1s cubic-bezier(.22,1,.36,1); }
+
+  .pct-circle {
+    position: relative;
+    width: 80px; height: 80px;
+    flex-shrink: 0;
+  }
+
+  .pct-circle svg { transform: rotate(-90deg); }
+  .pct-circle-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 7; }
+  .pct-circle-fg { fill: none; stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset 1s cubic-bezier(.22,1,.36,1); }
+
+  .pct-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* Table card */
+  .table-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+  }
+
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .table-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .table-title i {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--amber), #d97706);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #fff;
+  }
+
+  .search-bar {
+    position: relative;
+  }
+
+  .search-bar i {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  .search-bar input {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 8px 12px 8px 33px;
+    color: var(--text);
+    font-size: 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    width: 220px;
+  }
+
+  .search-bar input:focus { border-color: var(--amber2); }
+
+  .table-wrap { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+
+  thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody td { padding: 11px 14px; color: var(--text); vertical-align: middle; }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .status-badge.present { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+  .status-badge.absent  { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+  .status-badge i { font-size: 0.6rem; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state i { font-size: 3rem; margin-bottom: 14px; opacity: 0.3; display: block; }
+
+  @media (max-width: 1024px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .content { padding: 16px; }
+    .topbar { padding: 12px 16px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .profile-banner { flex-wrap: wrap; }
+    .search-bar input { width: 160px; }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stat-value { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+    <div>
+      <div class="brand-name">Lotus Academy</div>
+      <div class="brand-tag">Student Portal</div>
+    </div>
+  </div>
+
+  <div class="student-chip">
+    <div class="student-avatar"><i class="fas fa-user-graduate"></i></div>
+    <div class="student-chip-name">{{ student.student_name }}</div>
+    <div class="student-chip-info">
+      Class {{ student.class }} &bull; {{ student.board }}
+      {% if student.stream != 'nan' %} &bull; {{ student.stream }}{% endif %}
+    </div>
+  </div>
+
+  <div class="nav-section">Navigation</div>
+  <a class="nav-item active" href="#">
+    <i class="fas fa-chart-pie"></i> Dashboard
+  </a>
+  <a class="nav-item" href="#records-section">
+    <i class="fas fa-calendar-days"></i> Attendance Records
+  </a>
+
+  <div class="sidebar-bottom">
+    <a class="nav-item" href="{{ url_for('logout') }}">
+      <i class="fas fa-right-from-bracket"></i> Logout
+    </a>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-title">Attendance Dashboard</div>
+    <div class="topbar-right">
+      <span style="font-size:.82rem;color:var(--muted)">
+        <i class="fas fa-rotate" style="margin-right:4px"></i>
+        Auto-refreshed every 6h
+      </span>
+      <a class="btn btn-danger" href="{{ url_for('logout') }}">
+        <i class="fas fa-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Profile Banner -->
+    <div class="profile-banner">
+      <div class="profile-avatar"><i class="fas fa-user-graduate"></i></div>
+      <div class="profile-info">
+        <h2>{{ student.student_name }}</h2>
+        <div class="tags">
+          <span class="tag tag-amber">Class {{ student.class }}</span>
+          <span class="tag tag-blue">{{ student.board }}</span>
+          {% if student.stream != 'nan' %}
+          <span class="tag tag-purple">{{ student.stream }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card present">
+        <div class="stat-icon"><i class="fas fa-check"></i></div>
+        <div class="stat-value">{{ present }}</div>
+        <div class="stat-label">Days Present</div>
+      </div>
+      <div class="stat-card absent">
+        <div class="stat-icon"><i class="fas fa-xmark"></i></div>
+        <div class="stat-value">{{ absent }}</div>
+        <div class="stat-label">Days Absent</div>
+      </div>
+      <div class="stat-card total">
+        <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+        <div class="stat-value">{{ total }}</div>
+        <div class="stat-label">Total Working Days</div>
+      </div>
+      <div class="stat-card status">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div class="stat-value" style="font-size:1.1rem;padding-top:6px">
+          {{ latest }}
+        </div>
+        <div class="stat-label">Latest Status</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    {% set pct_val = pct %}
+    {% set bar_color = '#10b981' if pct_val >= 75 else ('#f59e0b' if pct_val >= 50 else '#ef4444') %}
+    {% set circ = 188.5 %}
+    {% set offset = circ - (circ * pct_val / 100) %}
+
+    <div class="progress-section">
+      <div class="pct-circle">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle class="pct-circle-bg" cx="40" cy="40" r="30"/>
+          <circle class="pct-circle-fg"
+            cx="40" cy="40" r="30"
+            stroke="{{ bar_color }}"
+            stroke-dasharray="{{ circ }}"
+            stroke-dashoffset="{{ offset }}"
+            id="circ-fg"/>
+        </svg>
+        <div class="pct-text">{{ pct }}%</div>
+      </div>
+      <div class="progress-info">
+        <div class="progress-label">Attendance Percentage</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill"
+               style="width:{{ pct }}%;background:{{ bar_color }}"
+               id="prog-bar">
+          </div>
+        </div>
+        <div style="font-size:.82rem;color:var(--muted);margin-top:8px">
+          {% if pct >= 75 %}
+            <i class="fas fa-circle-check" style="color:var(--green)"></i>
+            Good standing — attendance above 75%
+          {% elif pct >= 50 %}
+            <i class="fas fa-triangle-exclamation" style="color:var(--amber)"></i>
+            Below target — aim for 75% attendance
+          {% else %}
+            <i class="fas fa-circle-xmark" style="color:var(--red)"></i>
+            Critical — attendance below 50%
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance Table -->
+    <div class="table-card" id="records-section">
+      <div class="table-header">
+        <div class="table-title">
+          <i class="fas fa-table-list"></i>
+          Attendance Records
+          <span style="font-size:0.8rem;font-weight:400;color:var(--muted);margin-left:4px">
+            ({{ total }} entries)
+          </span>
+        </div>
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" id="att-search" placeholder="Search records…" oninput="filterAtt()">
+        </div>
+      </div>
+
+      {% if records %}
+      <div class="table-wrap">
+        <table id="att-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Board</th>
+              <th>Class</th>
+              <th>Stream</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in records %}
+            <tr>
+              <td style="color:var(--muted)">{{ loop.index }}</td>
+              <td>
+                <i class="fas fa-calendar-day" style="color:var(--muted);margin-right:5px;font-size:.8rem"></i>
+                {{ r.date }}
+              </td>
+              <td>
+                <i class="fas fa-clock" style="color:var(--muted);margin-right:5px;font-size:.8rem"></i>
+                {{ r.time }}
+              </td>
+              <td>
+                {% if r.status.upper() == 'PRESENT' %}
+                <span class="status-badge present">
+                  <i class="fas fa-circle-check"></i> Present
+                </span>
+                {% else %}
+                <span class="status-badge absent">
+                  <i class="fas fa-circle-xmark"></i> Absent
+                </span>
+                {% endif %}
+              </td>
+              <td>{{ r.board }}</td>
+              <td>Class {{ r.class }}</td>
+              <td style="color:var(--muted)">{{ r.stream if r.stream != 'nan' else '—' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <i class="fas fa-calendar-xmark"></i>
+        <div style="font-size:1rem;color:var(--text);margin-bottom:6px">No attendance records found</div>
+        <div style="font-size:0.85rem">Records will appear here once synced from the biometric system.</div>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function filterAtt() {
+    const q = document.getElementById('att-search').value.toLowerCase();
+    document.querySelectorAll('#att-table tbody tr').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  // Animate progress bar on load
+  window.addEventListener('load', () => {
+    const bar = document.getElementById('prog-bar');
+    if (bar) { bar.style.width = bar.style.width; } // trigger CSS
+  });
+</script>
+</body>
+</html>

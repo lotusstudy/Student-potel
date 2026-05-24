@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration — Lotus Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --amber:   #f59e0b;
+    --amber2:  #fbbf24;
+    --deep:    #0c0c18;
+    --sidebar: #12122a;
+    --surface: #181830;
+    --card:    #1e1e3a;
+    --border:  rgba(255,255,255,0.08);
+    --text:    #e2e8f0;
+    --muted:   #94a3b8;
+    --green:   #10b981;
+    --red:     #ef4444;
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--deep);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 28px 20px;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--amber), #d97706);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .brand-tag { font-size: 0.72rem; color: var(--muted); }
+
+  .nav-section {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin: 20px 0 10px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    background: rgba(245,158,11,0.12);
+    color: var(--amber2);
+  }
+
+  .nav-item i { width: 18px; text-align: center; }
+
+  .sidebar-bottom {
+    margin-top: auto;
+  }
+
+  .admin-badge {
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.85rem;
+    color: var(--amber2);
+    margin-bottom: 12px;
+  }
+
+  /* Main content */
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Topbar */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: #fff;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Content area */
+  .content {
+    padding: 32px;
+    flex: 1;
+  }
+
+  /* Alert boxes */
+  .alert {
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+  .alert-success { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+  .alert-error   { background: rgba(239,68,68,0.12);  border: 1px solid rgba(239,68,68,0.3);  color: #fca5a5; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title i {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--amber), #d97706);
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: #fff;
+  }
+
+  /* Form */
+  .form-group { margin-bottom: 18px; }
+
+  .form-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 7px;
+  }
+
+  .form-control {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-size: 0.92rem;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .form-control:focus { border-color: var(--amber2); }
+  .form-control option { background: var(--card); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--amber), #d97706);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(245,158,11,0.3);
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,158,11,0.4); }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.07);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+
+  /* Stream field toggle */
+  #stream-group { display: none; }
+
+  /* Table */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+  }
+
+  .search-bar {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .search-bar i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .search-bar input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 14px 9px 36px;
+    color: var(--text);
+    font-size: 0.88rem;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+  }
+
+  .search-bar input:focus { border-color: var(--amber2); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  thead th {
+    background: rgba(255,255,255,0.04);
+    padding: 11px 14px;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(255,255,255,0.025); }
+  tbody td { padding: 11px 14px; color: var(--text); vertical-align: middle; }
+  tbody tr:last-child { border-bottom: none; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-cbse { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+  .badge-icse { background: rgba(245,158,11,0.2); color: var(--amber2); }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state i { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+
+  /* Spinner */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Refresh toast */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 0.88rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(100px);
+    transition: transform 0.35s cubic-bezier(.22,1,.36,1);
+    z-index: 999;
+  }
+
+  #toast.show { transform: none; }
+  #toast.ok i  { color: var(--green); }
+  #toast.err i { color: var(--red); }
+
+  @media (max-width: 900px) {
+    .sidebar { width: 220px; }
+    .main { margin-left: 220px; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .content { padding: 20px; }
+    .topbar { padding: 14px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+    <div>
+      <div class="brand-name">Lotus Academy</div>
+      <div class="brand-tag">Admin Portal</div>
+    </div>
+  </div>
+
+  <div class="nav-section">Management</div>
+  <a class="nav-item active" href="{{ url_for('registration') }}">
+    <i class="fas fa-user-plus"></i> Register Student
+  </a>
+  <button class="nav-item" onclick="refreshRecords()">
+    <i class="fas fa-rotate"></i> Refresh Records
+  </button>
+
+  <div class="sidebar-bottom">
+    <div class="admin-badge">
+      <i class="fas fa-shield-halved" style="margin-right:6px"></i>
+      Signed in as <strong>{{ admin }}</strong>
+    </div>
+    <a class="nav-item" href="{{ url_for('logout') }}">
+      <i class="fas fa-right-from-bracket"></i> Logout
+    </a>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Student Registration</div>
+    <div class="topbar-right">
+      <span style="font-size:.85rem;color:var(--muted)">
+        <i class="fas fa-circle" style="color:#10b981;font-size:.5rem;margin-right:5px"></i>
+        Auto-sync every 6 hours
+      </span>
+      <button class="btn btn-secondary" onclick="refreshRecords()" id="refresh-btn">
+        <i class="fas fa-rotate"></i> Refresh Now
+        <div class="spinner" id="spin"></div>
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    {% if message %}
+    <div class="alert alert-success"><i class="fas fa-check-circle"></i> {{ message }}</div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-error"><i class="fas fa-circle-exclamation"></i> {{ error }}</div>
+    {% endif %}
+
+    <div class="grid-2">
+
+      <!-- Registration Form -->
+      <div class="card">
+        <div class="card-title">
+          <i class="fas fa-user-plus"></i> Register New Student
+        </div>
+
+        <form method="POST" action="{{ url_for('registration') }}">
+          <div class="form-group">
+            <label class="form-label">Student Full Name</label>
+            <input class="form-control" type="text" name="student_name" placeholder="e.g. Arnav Prakash" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input class="form-control" type="text" name="username" placeholder="e.g. Arnav_43" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-control" type="password" name="password" placeholder="Set a password" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Board</label>
+            <select class="form-control" name="board" required>
+              <option value="">— Select Board —</option>
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE">ICSE</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Class</label>
+            <select class="form-control" name="class" id="class-select" required onchange="toggleStream()">
+              <option value="">— Select Class —</option>
+              {% for c in range(4, 13) %}
+              <option value="{{ c }}">Class {{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group" id="stream-group">
+            <label class="form-label">Stream</label>
+            <select class="form-control" name="stream" id="stream-select">
+              <option value="Maths">Maths</option>
+              <option value="Commerce">Commerce</option>
+              <option value="Humanity">Humanity</option>
+              <option value="Biology">Biology</option>
+              <option value="Arts">Arts</option>
+            </select>
+          </div>
+
+          <!-- hidden stream for lower classes -->
+          <input type="hidden" name="stream" id="stream-hidden" value="nan">
+
+          <div class="btn-row">
+            <button class="btn btn-primary" type="submit">
+              <i class="fas fa-user-plus"></i> Register Student
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Student Records -->
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="card-title">
+          <i class="fas fa-users"></i>
+          Registered Students
+          <span style="margin-left:auto;font-size:0.8rem;font-weight:400;color:var(--muted)">
+            {{ students | length }} total
+          </span>
+        </div>
+
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" id="stu-search" placeholder="Search by name, username or class…" oninput="filterTable()">
+        </div>
+
+        {% if students %}
+        <div class="table-wrap">
+          <table id="stu-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Class</th>
+                <th>Board</th>
+                <th>Stream</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in students %}
+              <tr>
+                <td style="color:var(--muted)">{{ loop.index }}</td>
+                <td><code style="color:var(--amber2);font-size:.85rem">{{ s.username }}</code></td>
+                <td><strong>{{ s.student_name }}</strong></td>
+                <td>Class {{ s.class }}</td>
+                <td>
+                  <span class="badge badge-{{ s.board | lower }}">{{ s.board }}</span>
+                </td>
+                <td style="color:var(--muted)">{{ s.stream if s.stream != 'nan' else '—' }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <div><i class="fas fa-users-slash"></i></div>
+          <div>No students registered yet.</div>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"><i class="fas fa-circle-check"></i><span id="toast-msg"></span></div>
+
+<script>
+  function toggleStream() {
+    const cls = parseInt(document.getElementById('class-select').value);
+    const grp = document.getElementById('stream-group');
+    const sel = document.getElementById('stream-select');
+    const hid = document.getElementById('stream-hidden');
+    if (cls >= 11) {
+      grp.style.display = 'block';
+      sel.name = 'stream';
+      hid.name = '';
+    } else {
+      grp.style.display = 'none';
+      sel.name = '';
+      hid.name = 'stream';
+    }
+  }
+
+  function filterTable() {
+    const q = document.getElementById('stu-search').value.toLowerCase();
+    document.querySelectorAll('#stu-table tbody tr').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  async function refreshRecords() {
+    const btn  = document.getElementById('refresh-btn');
+    const spin = document.getElementById('spin');
+    btn.disabled = true;
+    spin.style.display = 'block';
+
+    try {
+      const r = await fetch('{{ url_for("refresh_records") }}', { method: 'POST' });
+      const d = await r.json();
+      showToast(d.status === 'ok'
+        ? `✓ Synced! ${d.inserted} new records added.`
+        : `Error: ${d.message}`, d.status === 'ok');
+    } catch(e) {
+      showToast('Network error. Please try again.', false);
+    }
+
+    spin.style.display = 'none';
+    btn.disabled = false;
+  }
+
+  function showToast(msg, ok) {
+    const t = document.getElementById('toast');
+    const m = document.getElementById('toast-msg');
+    t.className = ok ? 'show ok' : 'show err';
+    t.querySelector('i').className = ok ? 'fas fa-circle-check' : 'fas fa-circle-exclamation';
+    m.textContent = msg;
+    setTimeout(() => t.className = '', 4000);
+  }
+</script>
+</body>
+</html>
